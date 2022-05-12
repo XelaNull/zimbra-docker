@@ -35,7 +35,7 @@ DOTRAINSA="yes"
 EXPANDMENU="no"
 HOSTNAME="$HOSTNAME.$DOMAIN"
 HTTPPORT="8080"
-HTTPPROXY="TRUE"
+HTTPPROXY="FALSE"
 HTTPPROXYPORT="80"
 HTTPSPORT="8443"
 HTTPSPROXYPORT="443"
@@ -126,16 +126,8 @@ zimbra_require_interprocess_security="1"
 zimbra_server_hostname="$HOSTNAME.$DOMAIN"
 INSTALL_PACKAGES="zimbra-core zimbra-ldap zimbra-logger zimbra-mta zimbra-snmp zimbra-store zimbra-apache zimbra-spell zimbra-memcached zimbra-proxy"
 EOF
+
 ##Install the Zimbra Collaboration ##
-echo "Downloading Zimbra Collaboration 8.8.15"
-wget -O /opt/zimbra-install/zimbra-zcs-8.8.15.tar.gz https://files.zimbra.com/downloads/8.8.15_GA/zcs-8.8.15_GA_3869.UBUNTU18_64.20190918004220.tgz
-
-echo "Extracting files from the archive"
-tar xzvf /opt/zimbra-install/zimbra-zcs-8.8.15.tar.gz -C /opt/zimbra-install/
-
-echo "Update package cache"
-apt update
-
 echo "Installing Zimbra Collaboration just the Software"
 cd /opt/zimbra-install/zcs-* && ./install.sh -s < /opt/zimbra-install/installZimbra-keystrokes
 

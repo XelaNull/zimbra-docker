@@ -28,4 +28,8 @@ COPY opt /opt/
 
 COPY etc /etc/
 
+RUN wget -O /opt/zimbra-install/zimbra-zcs-8.8.15.tar.gz https://files.zimbra.com/downloads/8.8.15_GA/zcs-8.8.15_GA_3869.UBUNTU18_64.20190918004220.tgz
+
+RUN tar xzvf /opt/zimbra-install/zimbra-zcs-8.8.15.tar.gz -C /opt/zimbra-install/
+
 CMD ["/bin/bash", "/opt/start.sh", "-d"]
