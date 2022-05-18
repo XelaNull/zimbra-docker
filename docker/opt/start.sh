@@ -8,19 +8,6 @@ RANDOMHAM=$(date +%s|sha256sum|base64|head -c 10)
 RANDOMSPAM=$(date +%s|sha256sum|base64|head -c 10)
 RANDOMVIRUS=$(date +%s|sha256sum|base64|head -c 10)
 
-## Installing the DNS Server ##
-echo "Configuring DNS Server"
-mv /etc/dnsmasq.conf /etc/dnsmasq.conf.old
-cat <<EOF >>/etc/dnsmasq.conf
-server=8.8.8.8
-listen-address=127.0.0.1
-domain=$DOMAIN
-mx-host=$DOMAIN,$HOSTNAME.$DOMAIN,0
-address=/$HOSTNAME.$DOMAIN/$CONTAINERIP
-user=root
-EOF
-sudo service dnsmasq restart
-
 ##Creating the Zimbra Collaboration Config File ##
 touch /opt/zimbra-install/installZimbraScript
 cat <<EOF >/opt/zimbra-install/installZimbraScript
@@ -128,13 +115,19 @@ INSTALL_PACKAGES="zimbra-core zimbra-ldap zimbra-logger zimbra-mta zimbra-snmp z
 EOF
 
 ##Install the Zimbra Collaboration ##
-echo "Installing Zimbra Collaboration just the Software"
-cd /opt/zimbra-install/zcs-* && ./install.sh -s < /opt/zimbra-install/installZimbra-keystrokes
+if [ ! -f /opt/is_zimbra_installed.state ]; then
+	echo "Installing Zimbra Collaboration just the Software"
+	cd /opt/zimbra-install/zcs-* && ./install.sh -s < /opt/zimbra-install/installZimbra-keystrokes
 
-echo "Installing Zimbra Collaboration injecting the configuration"
-/opt/zimbra/libexec/zmsetup.pl -c /opt/zimbra-install/installZimbraScript
+	echo "Installing Zimbra Collaboration injecting the configuration"
+	/opt/zimbra/libexec/zmsetup.pl -c /opt/zimbra-install/installZimbraScript
+
+	touch /opt/is_zimbra_installed.state
+fi
 
 su - zimbra -c 'zmcontrol restart'
+service rsyslog start
+cron
 echo "You can access now to your Zimbra Collaboration Server"
 
 if [[ $1 == "-d" ]]; then
